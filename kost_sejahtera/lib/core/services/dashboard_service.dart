@@ -20,9 +20,23 @@ class DashboardService {
   }
 
   // Get financial trend data
-  Future<Map<String, dynamic>> getFinancialTrend() async {
+  Future<List<dynamic>> getFinancialTrend() async {
     try {
       final response = await _client.dio.get('/dashboard/financial-trend');
+
+      if (response.data['success']) {
+        return response.data['data'];
+      } else {
+        throw Exception(response.data['message']);
+      }
+    } on DioException catch (e) {
+      throw _client.handleError(e);
+    }
+  }
+  // Get tenant dashboard data
+  Future<Map<String, dynamic>> getTenantDashboard() async {
+    try {
+      final response = await _client.dio.get('/dashboard/tenant');
 
       if (response.data['success']) {
         return response.data['data'];

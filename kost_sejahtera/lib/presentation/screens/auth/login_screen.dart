@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Kost Sejahtera',
+                          'Kos Las Vegas',
                           style: AppTextStyles.h1.copyWith(
                             color: AppColors.primary,
                             fontSize: 36,
@@ -223,35 +223,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: _handleLogin,
                               isLoading: _isLoading,
                               icon: Icons.arrow_forward,
-                            ),
-                            
-                            SizedBox(height: 24),
-                            
-                            // Register Link
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Belum punya akun? ',
-                                    style: AppTextStyles.bodyMedium.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      // TODO: Navigate to register
-                                    },
-                                    child: Text(
-                                      'Daftar Sekarang',
-                                      style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                           ],
                         ),

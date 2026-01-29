@@ -1,38 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/text_styles.dart';
 import '../../widgets/common/custom_button.dart';
+import '../../../core/services/payment_service.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic> invoice;
+
+  const PaymentScreen({Key? key, required this.invoice}) : super(key: key);
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
+  final PaymentService _paymentService = PaymentService();
   String? _selectedMethod;
-  String? _selectedProvider;
+  String? _selectedProvider; // e.g., 'bca', 'gopay'
+  bool _isLoading = false;
 
   final Map<String, List<Map<String, dynamic>>> paymentMethods = {
     'bank_transfer': [
-      {'name': 'BCA Virtual Account', 'icon': Icons.account_balance, 'fee': 0},
-      {'name': 'Mandiri Virtual Account', 'icon': Icons.account_balance, 'fee': 0},
-      {'name': 'BNI Virtual Account', 'icon': Icons.account_balance, 'fee': 0},
+      {'name': 'BCA Virtual Account', 'icon': Icons.account_balance, 'id': 'bca', 'fee': 0},
+      {'name': 'Mandiri Virtual Account', 'icon': Icons.account_balance, 'id': 'mandiri', 'fee': 0},
+      {'name': 'BNI Virtual Account', 'icon': Icons.account_balance, 'id': 'bni', 'fee': 0},
+      {'name': 'BRI Virtual Account', 'icon': Icons.account_balance, 'id': 'bri', 'fee': 0},
     ],
     'ewallet': [
-      {'name': 'GoPay', 'icon': Icons.wallet, 'fee': 0},
-      {'name': 'OVO', 'icon': Icons.wallet, 'fee': 0},
-      {'name': 'ShopeePay', 'icon': Icons.wallet, 'fee': 0},
-      {'name': 'DANA', 'icon': Icons.wallet, 'fee': 0},
+      {'name': 'GoPay', 'icon': Icons.wallet, 'id': 'gopay', 'fee': 0},
+      {'name': 'ShopeePay', 'icon': Icons.wallet, 'id': 'shopeepay', 'fee': 0},
     ],
     'qris': [
-      {'name': 'QRIS', 'icon': Icons.qr_code, 'fee': 0},
+      {'name': 'QRIS', 'icon': Icons.qr_code, 'id': 'qris', 'fee': 0},
     ],
   };
 
   @override
   Widget build(BuildContext context) {
+    final total = double.parse(widget.invoice['total'].toString());
+    final formattedTotal = NumberFormat.currency(locale: 'id', symbol: 'Rp ', decimalDigits: 0).format(total);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Pilih Metode Pembayaran'),
@@ -50,7 +59,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   children: [
                     Text('Total Tagihan', style: AppTextStyles.bodyMedium),
                     Text(
-                      'Rp 2.500.000',
+                      formattedTotal,
                       style: AppTextStyles.h3.copyWith(color: AppColors.primary),
                     ),
                   ],
@@ -59,8 +68,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Biaya Admin', style: AppTextStyles.bodySmall),
-                    Text('Rp 0', style: AppTextStyles.bodySmall),
+                    Text('No. Invoice', style: AppTextStyles.bodySmall),
+                    Text(widget.invoice['invoice_number'], style: AppTextStyles.bodySmall),
                   ],
                 ),
                 Divider(height: 24),
@@ -69,7 +78,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   children: [
                     Text('Total Bayar', style: AppTextStyles.h4),
                     Text(
-                      'Rp 2.500.000',
+                      formattedTotal,
                       style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
                     ),
                   ],
@@ -111,9 +120,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ],
             ),
             child: CustomButton(
-              text: 'Bayar Sekarang',
-              onPressed: _selectedProvider != null ? _handlePayment : () {},
-              icon: Icons.payment,
+              text: _isLoading ? 'Memproses...' : 'Bayar Sekarang',
+              onPressed: (_selectedProvider != null && !_isLoading) ? _handlePayment : () {},
+              icon: _isLoading ? null : Icons.payment,
+              isLoading: _isLoading,
             ),
           ),
         ],
@@ -133,7 +143,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             provider['icon'],
             provider['fee'],
             methodType,
-            provider['name'],
+            provider['id'],
           );
         }).toList(),
       ],
@@ -145,15 +155,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
     IconData icon,
     int fee,
     String method,
-    String provider,
+    String providerId,
   ) {
-    final isSelected = _selectedMethod == method && _selectedProvider == provider;
+    final isSelected = _selectedMethod == method && _selectedProvider == providerId;
     
     return GestureDetector(
       onTap: () {
         setState(() {
           _selectedMethod = method;
-          _selectedProvider = provider;
+          _selectedProvider = providerId;
         });
       },
       child: Container(
@@ -199,19 +209,50 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> _handlePayment() async {
-    // TODO: Integrate with Midtrans
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Proses Pembayaran'),
-        content: Text('Integrasi Midtrans akan ditambahkan di sini.\n\nMetode: $_selectedProvider'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+    setState(() => _isLoading = true);
+    
+    try {
+      final result = await _paymentService.createTransaction(
+        invoiceId: widget.invoice['id'],
+        paymentMethod: _selectedMethod ?? 'other', 
+      );
+      
+      if (!mounted) return;
+
+      final redirectUrl = result['redirect_url'];
+      if (redirectUrl != null) {
+          final Uri url = Uri.parse(redirectUrl);
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+            // Show confirmation dialog after returning from browser
+             if (!mounted) return;
+             showDialog(
+                context: context, 
+                builder: (ctx) => AlertDialog(
+                    title: Text('Menunggu Pembayaran'),
+                    content: Text('Silakan selesaikan pembayaran di halaman yang terbuka. Jika sudah, tekan tombol "Sudah Bayar" untuk memuat ulang status.'),
+                    actions: [
+                        TextButton(
+                            onPressed: () {
+                                Navigator.pop(ctx); // Close dialog
+                                Navigator.pop(context); // Close payment screen
+                            }, 
+                            child: Text('Sudah Bayar')
+                        )
+                    ],
+                )
+             );
+          } else {
+             throw Exception('Tidak dapat membuka halaman pembayaran');
+          }
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal: ${e.toString().replaceAll('Exception: ', '')}')),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 }

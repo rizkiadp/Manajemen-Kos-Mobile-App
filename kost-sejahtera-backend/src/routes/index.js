@@ -8,6 +8,8 @@ const invoiceController = require('../controllers/invoiceController');
 const transactionController = require('../controllers/transactionController');
 const dashboardController = require('../controllers/dashboardController');
 const paymentController = require('../controllers/paymentController');
+const maintenanceController = require('../controllers/maintenanceController');
+const messageController = require('../controllers/messageController');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
 
 // Auth routes
@@ -34,6 +36,7 @@ router.get('/tenants/:id', authMiddleware, tenantController.getTenantById);
 router.post('/tenants', authMiddleware, adminOnly, tenantController.createTenant);
 router.put('/tenants/:id', authMiddleware, adminOnly, tenantController.updateTenant);
 router.delete('/tenants/:id', authMiddleware, adminOnly, tenantController.deleteTenant);
+router.put('/tenants/:id/move-out', authMiddleware, adminOnly, tenantController.moveOutTenant);
 
 // Invoice routes
 router.get('/invoices', authMiddleware, invoiceController.getAllInvoices);
@@ -48,9 +51,22 @@ router.get('/transactions', authMiddleware, adminOnly, transactionController.get
 router.get('/transactions/summary', authMiddleware, adminOnly, transactionController.getTransactionSummary);
 router.post('/transactions', authMiddleware, adminOnly, transactionController.createTransaction);
 
-// Payment routes
 router.post('/payments/create-transaction', authMiddleware, paymentController.createTransaction);
 router.post('/payments/webhook', paymentController.handleWebhook);
 router.get('/payments/status/:order_id', authMiddleware, paymentController.checkStatus);
+
+// Maintenance Report routes
+router.post('/maintenance-reports', authMiddleware, maintenanceController.createReport);
+router.get('/maintenance-reports', authMiddleware, maintenanceController.getReports);
+router.get('/maintenance-reports/pending-count', authMiddleware, adminOnly, maintenanceController.getPendingCount);
+router.get('/maintenance-reports/:id', authMiddleware, maintenanceController.getReportById);
+router.put('/maintenance-reports/:id', authMiddleware, adminOnly, maintenanceController.updateReportStatus);
+router.delete('/maintenance-reports/:id', authMiddleware, adminOnly, maintenanceController.deleteReport);
+
+// Message routes
+router.post('/messages', authMiddleware, messageController.sendMessage);
+router.get('/messages/conversation/:reportId', authMiddleware, messageController.getConversation);
+router.get('/messages/unread-count', authMiddleware, messageController.getUnreadCount);
+router.put('/messages/:id/read', authMiddleware, messageController.markAsRead);
 
 module.exports = router;

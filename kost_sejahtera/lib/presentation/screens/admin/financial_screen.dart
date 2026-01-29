@@ -7,6 +7,7 @@ import '../../widgets/common/custom_button.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../../core/services/transaction_service.dart';
 import '../../../core/services/tenant_service.dart';
+import '../../../core/services/dashboard_service.dart';
 
 class FinancialScreen extends StatefulWidget {
   const FinancialScreen({Key? key}) : super(key: key);
@@ -21,10 +22,11 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
   bool _isLoading = true;
   List<Map<String, dynamic>> _transactions = [];
   Map<String, dynamic> _summary = {
-    'totalIncome': 0,
-    'totalExpense': 0,
-    'netIncome': 0,
+    'income': {'total': 0},
+    'expense': {'total': 0},
+    'net': 0,
   };
+  List<dynamic> _trendData = [];
 
   @override
   void initState() {
@@ -37,11 +39,13 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
     setState(() => _isLoading = true);
     try {
       final transactions = await _transactionService.getTransactions();
-      // final summary = await _transactionService.getTransactionSummary(); // Endpoint might not exist yet
+      final summary = await _transactionService.getTransactionSummary();
+      final trend = await DashboardService().getFinancialTrend();
       
       setState(() {
         _transactions = transactions;
-        // _summary = summary;
+        _summary = summary;
+        _trendData = trend;
         _isLoading = false;
       });
     } catch (e) {
@@ -129,12 +133,12 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total Saldo',
+            'Total Saldo (Net)',
             style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
           ),
           SizedBox(height: 8),
           Text(
-            _formatCurrency(45750000), // Mock data for now
+            _formatCurrency(_summary['net']),
             style: AppTextStyles.h1.copyWith(color: AppColors.textPrimary, fontSize: 32),
           ),
           SizedBox(height: 24),
@@ -153,7 +157,7 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
                     ),
                     SizedBox(height: 4),
                     Text(
-                      _formatCurrency(52500000),
+                      _formatCurrency(_summary['income']?['total']),
                       style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
                     ),
                   ],
@@ -172,7 +176,7 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
                     ),
                     SizedBox(height: 4),
                     Text(
-                      _formatCurrency(6750000),
+                      _formatCurrency(_summary['expense']?['total']),
                       style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
                     ),
                   ],
@@ -186,6 +190,14 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
   }
 
   Widget _buildFinancialChart() {
+    if (_trendData.isEmpty) {
+      return Container(
+        height: 300,
+        decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(16)),
+        child: Center(child: Text("Belum ada data tren")),
+      );
+    }
+
     return Container(
       height: 300,
       padding: EdgeInsets.all(16),
@@ -196,26 +208,31 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: 20,
-          barTouchData: BarTouchData(enabled: false),
+          maxY: _TrendMaxY(),
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              tooltipBgColor: Colors.blueGrey,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                 return BarTooltipItem(
+                   _formatCurrency(rod.toY),
+                   const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                 );
+              }
+            ),
+          ),
           titlesData: FlTitlesData(
             show: true,
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 getTitlesWidget: (double value, TitleMeta meta) {
-                  const style = TextStyle(color: AppColors.textSecondary, fontSize: 10);
-                  String text;
-                  switch (value.toInt()) {
-                    case 0: text = 'Jan'; break;
-                    case 1: text = 'Feb'; break;
-                    case 2: text = 'Mar'; break;
-                    case 3: text = 'Apr'; break;
-                    case 4: text = 'May'; break;
-                    case 5: text = 'Jun'; break;
-                    default: text = '';
+                  if (value.toInt() >= 0 && value.toInt() < _trendData.length) {
+                     return SideTitleWidget(
+                       axisSide: meta.axisSide, 
+                       child: Text(_trendData[value.toInt()]['month'].toString().substring(5), style: TextStyle(fontSize: 10))
+                     );
                   }
-                  return SideTitleWidget(axisSide: meta.axisSide, child: Text(text, style: style));
+                  return Container();
                 },
               ),
             ),
@@ -225,17 +242,31 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
           ),
           gridData: FlGridData(show: false),
           borderData: FlBorderData(show: false),
-          barGroups: [
-            BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 8, color: AppColors.success), BarChartRodData(toY: 3, color: AppColors.danger)]),
-            BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 10, color: AppColors.success), BarChartRodData(toY: 4, color: AppColors.danger)]),
-            BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 14, color: AppColors.success), BarChartRodData(toY: 5, color: AppColors.danger)]),
-            BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 15, color: AppColors.success), BarChartRodData(toY: 6, color: AppColors.danger)]),
-            BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 13, color: AppColors.success), BarChartRodData(toY: 4, color: AppColors.danger)]),
-            BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 18, color: AppColors.success), BarChartRodData(toY: 7, color: AppColors.danger)]),
-          ],
+          barGroups: _trendData.asMap().entries.map((entry) {
+            final index = entry.key;
+            final data = entry.value;
+            return BarChartGroupData(
+              x: index,
+              barRods: [
+                BarChartRodData(toY: double.tryParse(data['income'].toString()) ?? 0, color: AppColors.success, width: 12),
+                BarChartRodData(toY: double.tryParse(data['expense'].toString()) ?? 0, color: AppColors.danger, width: 12),
+              ]
+            );
+          }).toList(),
         ),
       ),
     );
+  }
+  
+  double _TrendMaxY() {
+      double max = 0;
+      for (var item in _trendData) {
+          double inc = double.tryParse(item['income'].toString()) ?? 0;
+          double exp = double.tryParse(item['expense'].toString()) ?? 0;
+          if (inc > max) max = inc;
+          if (exp > max) max = exp;
+      }
+      return max * 1.2; // Add 20% buffer
   }
 
   Widget _buildHistoryTab() {
@@ -346,7 +377,16 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
         final tenant = activeTenants.firstWhere((t) => t['id'] == tenantId, orElse: () => {});
         if (tenant.isNotEmpty && tenant['room_price'] != null) {
             setDialogState(() {
-               items[0]['amount'] = tenant['room_price'];
+               // Parse room_price safely (handle String or int from JSON)
+               int price = 0;
+               if (tenant['room_price'] is int) {
+                 price = tenant['room_price'];
+               } else if (tenant['room_price'] is String) {
+                 price = double.tryParse(tenant['room_price'])?.toInt() ?? 0;
+               } else if (tenant['room_price'] is double) {
+                 price = (tenant['room_price'] as double).toInt();
+               }
+               items[0]['amount'] = price;
             });
         }
     }
@@ -405,6 +445,7 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
                       child: Row(
+                        key: ValueKey('item_$index'), // Key to maintain state
                         children: [
                           Expanded(
                             flex: 2,
@@ -417,6 +458,7 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
                           SizedBox(width: 8),
                           Expanded(
                             child: TextFormField(
+                              key: ValueKey(item['amount']), // Key forces rebuild when amount changes
                               initialValue: item['amount'].toString(),
                               decoration: InputDecoration(prefixText: 'Rp '),
                               keyboardType: TextInputType.number,

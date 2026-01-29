@@ -96,4 +96,16 @@ class TenantService {
       throw _client.handleError(e);
     }
   }
+  // Move out tenant (Soft delete)
+  Future<void> moveOutTenant(int id) async {
+    try {
+      final response = await _client.dio.put('/tenants/$id/move-out');
+
+      if (!response.data['success']) {
+        throw Exception(response.data['message']);
+      }
+    } on DioException catch (e) {
+      throw _client.handleError(e);
+    }
+  }
 }

@@ -102,6 +102,56 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
         );
       }
     }
+    }
+
+  Future<void> _moveOutTenant(int id, String name) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Konfirmasi Keluar Kos'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min, 
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Apakah Anda yakin ingin mengeluarkan $name?'),
+            SizedBox(height: 12),
+            Text('Tindakan ini akan:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('1. Menghapus akses login penghuni.'),
+            Text('2. Mengosongkan kamar agar bisa diisi penghuni baru.'),
+            Text('3. Menyimpan riwayat tagihan dan pembayaran.'),
+            SizedBox(height: 12),
+            Text('Data tidak akan hilang total, tapi status akan menjadi non-aktif.', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Batal'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.warning),
+            child: Text('Keluar Kos', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _tenantService.moveOutTenant(id);
+        _loadTenants();
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Penghuni berhasil dikeluarkan')),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+        );
+      }
+    }
   }
 
   @override
@@ -312,6 +362,8 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
             ],
           ),
           SizedBox(height: 16),
+
+          SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -323,7 +375,18 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
                   label: Text('Edit'),
                 ),
               ),
-              SizedBox(width: 12),
+              if (isActive) ...[
+                SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _moveOutTenant(tenant['id'], tenant['name']),
+                    icon: Icon(Icons.exit_to_app, size: 18),
+                    label: Text('Keluar'),
+                    style: OutlinedButton.styleFrom(foregroundColor: AppColors.warning),
+                  ),
+                ),
+              ],
+              SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => _deleteTenant(tenant['id']),

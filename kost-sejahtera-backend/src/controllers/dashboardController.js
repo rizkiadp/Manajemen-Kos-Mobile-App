@@ -147,14 +147,15 @@ exports.getTenantDashboard = async (req, res) => {
       LIMIT 1
     `, [tenantData.id]);
 
-        // Get payment history
+        // Get payment history (only successful payments)
         const paymentHistory = await db.query(`
-      SELECT i.*, p.paid_at, p.method
+      SELECT i.*, p.paid_at as payment_date, p.method as payment_method, p.status, p.amount as payment_amount, p.midtrans_order_id, p.midtrans_transaction_id
       FROM invoices i
-      LEFT JOIN payments p ON i.id = p.invoice_id
-      WHERE i.tenant_id = $1 AND i.status = 'paid'
-      ORDER BY i.paid_at DESC
-      LIMIT 5
+      JOIN payments p ON i.id = p.invoice_id
+      WHERE i.tenant_id = $1
+      AND p.status = 'success'
+      ORDER BY p.paid_at DESC
+      LIMIT 10
     `, [tenantData.id]);
 
         res.json({

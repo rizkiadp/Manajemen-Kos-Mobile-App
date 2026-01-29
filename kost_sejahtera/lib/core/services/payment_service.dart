@@ -1,83 +1,46 @@
 import 'package:dio/dio.dart';
+import '../network/api_client.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaymentService {
-  final Dio _dio = Dio();
-  
-  // TODO: Replace with your backend URL
-  final String _baseUrl = 'https://your-backend-url.com/api';
-  
-  // TODO: Replace with your Midtrans keys
-  final String _serverKey = 'YOUR_MIDTRANS_SERVER_KEY';
-  final String _clientKey = 'YOUR_MIDTRANS_CLIENT_KEY';
+  final ApiClient _client = ApiClient();
 
-  PaymentService() {
-    _dio.options.baseUrl = _baseUrl;
-    _dio.options.headers = {
-      'Content-Type': 'application/json',
-    };
-  }
-
-  /// Create Midtrans transaction
-  /// Returns transaction token for payment
+  // Create payment transaction
   Future<Map<String, dynamic>> createTransaction({
-    required String invoiceId,
-    required double amount,
-    required Map<String, dynamic> customerDetails,
+    required int invoiceId,
     required String paymentMethod,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await _client.dio.post(
         '/payments/create-transaction',
         data: {
-          'order_id': invoiceId,
-          'gross_amount': amount,
-          'customer_details': customerDetails,
+          'invoice_id': invoiceId,
           'payment_method': paymentMethod,
         },
       );
 
-      return response.data;
-    } catch (e) {
-      throw Exception('Failed to create transaction: $e');
+      if (response.data['success']) {
+        return response.data['data'];
+      } else {
+        throw Exception(response.data['message']);
+      }
+    } on DioException catch (e) {
+      throw _client.handleError(e);
     }
   }
 
-  /// Check payment status
-  Future<Map<String, dynamic>> checkPaymentStatus(String orderId) async {
+  // Check payment status
+  Future<Map<String, dynamic>> checkStatus(String orderId) async {
     try {
-      final response = await _dio.get('/payments/status/$orderId');
-      return response.data;
-    } catch (e) {
-      throw Exception('Failed to check payment status: $e');
-    }
-  }
+      final response = await _client.dio.get('/payments/status/$orderId');
 
-  /// Cancel transaction
-  Future<void> cancelTransaction(String orderId) async {
-    try {
-      await _dio.post('/payments/cancel/$orderId');
-    } catch (e) {
-      throw Exception('Failed to cancel transaction: $e');
+      if (response.data['success']) {
+        return response.data['data'];
+      } else {
+        throw Exception(response.data['message']);
+      }
+    } on DioException catch (e) {
+      throw _client.handleError(e);
     }
-  }
-
-  /// Get payment methods
-  Future<List<Map<String, dynamic>>> getPaymentMethods() async {
-    // This is a mock implementation
-    // In production, fetch from backend
-    return [
-      {
-        'type': 'bank_transfer',
-        'providers': ['BCA', 'Mandiri', 'BNI', 'BRI'],
-      },
-      {
-        'type': 'ewallet',
-        'providers': ['GoPay', 'OVO', 'ShopeePay', 'DANA'],
-      },
-      {
-        'type': 'qris',
-        'providers': ['QRIS'],
-      },
-    ];
   }
 }

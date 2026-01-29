@@ -1,0 +1,71 @@
+
+// Move out tenant (Soft delete / Deactivate)
+exports.moveOutTenant = async (req, res) => {
+    const client = await db.pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const { id } = req.params;
+
+        // 1. Get tenant info
+        const tenantRes = await client.query('SELECT * FROM tenants WHERE id = $1', [id]);
+        if (tenantRes.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ success: false, message: 'Penyewa tidak ditemukan' });
+        }
+        const tenant = tenantRes.rows[0];
+        const { user_id, room_id, status } = tenant;
+
+        if (status === 'inactive') {
+             await client.query('ROLLBACK');
+             return res.status(400).json({ success: false, message: 'Penyewa sudah tidak aktif (sudah keluar)' });
+        }
+
+        // 2. Free up the room
+        if (room_id) {
+            await client.query('UPDATE rooms SET is_available = true WHERE id = $1', [room_id]);
+        }
+
+        // 3. Update Tenant Status
+        await client.query(
+            `UPDATE tenants 
+             SET status = 'inactive', 
+                 room_id = NULL 
+             WHERE id = $1`,
+            [id]
+        );
+
+        // 4. Deactivate User Account (Obfuscate credentials)
+        // We use a timestamp to make the deleted email unique so they can potentially re-register with the same email later if needed (though unlikely for this use case, it prevents unique constraint errors).
+        const timestamp = Date.now();
+        const deletedEmail = `deleted_${timestamp}_${user_id}@kostsejahtera.com`; 
+        const bcrypt = require('bcryptjs');
+        const scrambledPassword = await bcrypt.hash(`deleted_${timestamp}`, 10);
+
+        await client.query(
+            `UPDATE users 
+             SET email = $1, 
+                 password = $2, 
+                 role = 'inactive_tenant' 
+             WHERE id = $3`,
+            [deletedEmail, scrambledPassword, user_id]
+        );
+
+        await client.query('COMMIT');
+
+        res.json({
+            success: true,
+            message: 'Penyewa berhasil dikeluarkan dan akses login dicabut.'
+        });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Move out tenant error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Terjadi kesalahan server'
+        });
+    } finally {
+        client.release();
+    }
+};

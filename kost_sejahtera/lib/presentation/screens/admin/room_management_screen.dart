@@ -205,7 +205,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
   Widget _buildRoomCard(Map<String, dynamic> room) {
     final bool isAvailable = room['is_available'] ?? true;
     final String type = room['type'] ?? 'Standard';
-    final int price = int.tryParse(room['price'].toString()) ?? 0;
+    final int price = double.tryParse(room['price'].toString())?.toInt() ?? 0;
     
     return Container(
       margin: EdgeInsets.only(bottom: 16),

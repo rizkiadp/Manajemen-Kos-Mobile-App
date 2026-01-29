@@ -6,30 +6,30 @@ exports.getAllTenants = async (req, res) => {
         const { status, payment_status, search } = req.query;
 
         let query = `
-      SELECT t.*, u.name, u.email, u.phone, r.room_number, r.type as room_type
+      SELECT t.*, u.name, u.email, u.phone, r.room_number, r.type as room_type, r.price as room_price
       FROM tenants t
       JOIN users u ON t.user_id = u.id
       LEFT JOIN rooms r ON t.room_id = r.id
-      WHERE 1=1
-    `;
+      WHERE 1 = 1
+            `;
         const params = [];
         let paramCount = 1;
 
         if (status) {
-            query += ` AND t.status = $${paramCount}`;
+            query += ` AND t.status = $${paramCount} `;
             params.push(status);
             paramCount++;
         }
 
         if (payment_status) {
-            query += ` AND t.payment_status = $${paramCount}`;
+            query += ` AND t.payment_status = $${paramCount} `;
             params.push(payment_status);
             paramCount++;
         }
 
         if (search) {
-            query += ` AND (u.name ILIKE $${paramCount} OR u.email ILIKE $${paramCount} OR t.nik ILIKE $${paramCount})`;
-            params.push(`%${search}%`);
+            query += ` AND(u.name ILIKE $${paramCount} OR u.email ILIKE $${paramCount} OR t.nik ILIKE $${paramCount})`;
+            params.push(`% ${search}% `);
             paramCount++;
         }
 
@@ -141,8 +141,8 @@ exports.createTenant = async (req, res) => {
             const hashedPassword = await bcrypt.hash(passToHash, 10);
 
             const newUser = await client.query(
-                `INSERT INTO users (email, password, name, phone, role) 
-                 VALUES ($1, $2, $3, $4, 'tenant') 
+                `INSERT INTO users(email, password, name, phone, role)
+        VALUES($1, $2, $3, $4, 'tenant') 
                  RETURNING id`,
                 [email, hashedPassword, name, phone]
             );
@@ -167,9 +167,9 @@ exports.createTenant = async (req, res) => {
 
         // 3. Create Tenant
         const result = await client.query(
-            `INSERT INTO tenants (user_id, room_id, nik, move_in_date, status, payment_status)
-             VALUES ($1, $2, $3, $4, 'active', 'unpaid')
-             RETURNING *`,
+            `INSERT INTO tenants(user_id, room_id, nik, move_in_date, status, payment_status)
+        VALUES($1, $2, $3, $4, 'active', 'unpaid')
+        RETURNING * `,
             [finalUserId, room_id, nik, move_in_date]
         );
 
@@ -238,13 +238,13 @@ exports.updateTenant = async (req, res) => {
             const values = [];
             let counter = 1;
 
-            if (name) { updates.push(`name = $${counter}`); values.push(name); counter++; }
-            if (email) { updates.push(`email = $${counter}`); values.push(email); counter++; }
-            if (phone) { updates.push(`phone = $${counter}`); values.push(phone); counter++; }
+            if (name) { updates.push(`name = $${counter} `); values.push(name); counter++; }
+            if (email) { updates.push(`email = $${counter} `); values.push(email); counter++; }
+            if (phone) { updates.push(`phone = $${counter} `); values.push(phone); counter++; }
             if (password) {
                 const bcrypt = require('bcryptjs');
                 const hashed = await bcrypt.hash(password, 10);
-                updates.push(`password = $${counter}`);
+                updates.push(`password = $${counter} `);
                 values.push(hashed);
                 counter++;
             }
@@ -252,7 +252,7 @@ exports.updateTenant = async (req, res) => {
             if (updates.length > 0) {
                 values.push(userId);
                 await client.query(
-                    `UPDATE users SET ${updates.join(', ')} WHERE id = $${counter}`,
+                    `UPDATE users SET ${updates.join(', ')} WHERE id = $${counter} `,
                     values
                 );
             }
@@ -289,11 +289,11 @@ exports.updateTenant = async (req, res) => {
         const result = await client.query(
             `UPDATE tenants
              SET room_id = COALESCE($1, room_id),
-                 nik = COALESCE($2, nik),
-                 status = COALESCE($3, status),
-                 payment_status = COALESCE($4, payment_status)
+            nik = COALESCE($2, nik),
+            status = COALESCE($3, status),
+            payment_status = COALESCE($4, payment_status)
              WHERE id = $5
-             RETURNING *`,
+        RETURNING * `,
             [room_id, nik, status, payment_status, id]
         );
 
@@ -364,6 +364,78 @@ exports.deleteTenant = async (req, res) => {
             success: false,
             message: 'Terjadi kesalahan server'
         });
+    }
+};
+
+
+// Move out tenant (Soft delete / Deactivate)
+exports.moveOutTenant = async (req, res) => {
+    const client = await db.pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const { id } = req.params;
+
+        // 1. Get tenant info
+        const tenantRes = await client.query('SELECT * FROM tenants WHERE id = $1', [id]);
+        if (tenantRes.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ success: false, message: 'Penyewa tidak ditemukan' });
+        }
+        const tenant = tenantRes.rows[0];
+        const { user_id, room_id, status } = tenant;
+
+        if (status === 'inactive') {
+            await client.query('ROLLBACK');
+            return res.status(400).json({ success: false, message: 'Penyewa sudah tidak aktif (sudah keluar)' });
+        }
+
+        // 2. Free up the room
+        if (room_id) {
+            await client.query('UPDATE rooms SET is_available = true WHERE id = $1', [room_id]);
+        }
+
+        // 3. Update Tenant Status
+        await client.query(
+            `UPDATE tenants 
+             SET status = 'inactive', 
+                 room_id = NULL 
+             WHERE id = $1`,
+            [id]
+        );
+
+        // 4. Deactivate User Account (Obfuscate credentials)
+        // We use a timestamp to make the deleted email unique so they can potentially re-register with the same email later if needed (though unlikely for this use case, it prevents unique constraint errors).
+        const timestamp = Date.now();
+        const deletedEmail = `deleted_${timestamp}_${user_id}@kostsejahtera.com`;
+        const bcrypt = require('bcryptjs');
+        const scrambledPassword = await bcrypt.hash(`deleted_${timestamp}`, 10);
+
+        await client.query(
+            `UPDATE users 
+             SET email = $1, 
+                 password = $2, 
+                 role = 'tenant' 
+             WHERE id = $3`,
+            [deletedEmail, scrambledPassword, user_id]
+        );
+
+        await client.query('COMMIT');
+
+        res.json({
+            success: true,
+            message: 'Penyewa berhasil dikeluarkan dan akses login dicabut.'
+        });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Move out tenant error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Terjadi kesalahan server'
+        });
+    } finally {
+        client.release();
     }
 };
 

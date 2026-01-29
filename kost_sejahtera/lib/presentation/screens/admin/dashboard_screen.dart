@@ -4,6 +4,9 @@ import '../../../core/constants/colors.dart';
 import '../../../core/constants/text_styles.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/services/dashboard_service.dart';
+import '../../../core/services/maintenance_service.dart';
+import 'maintenance_management_screen.dart';
+import 'admin_chat_screen.dart';
 
 class DashboardAdminScreen extends StatefulWidget {
   const DashboardAdminScreen({Key? key}) : super(key: key);
@@ -15,7 +18,9 @@ class DashboardAdminScreen extends StatefulWidget {
 class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   int _selectedIndex = 0;
   final DashboardService _dashboardService = DashboardService();
+  final MaintenanceService _maintenanceService = MaintenanceService();
   bool _isLoading = true;
+  int _pendingReportsCount = 0;
   Map<String, dynamic> _stats = {
     'totalRooms': 0,
     'occupiedRooms': 0,
@@ -38,6 +43,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
     setState(() => _isLoading = true);
     try {
       final data = await _dashboardService.getDashboardStats();
+      final pendingCount = await _maintenanceService.getPendingCount();
       setState(() {
         // Flatten the nested API response to match UI expectations
         _stats = {
@@ -51,6 +57,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
           'netIncome': data['financial']?['netIncome'] ?? 0,
           'pendingInvoices': data['invoices']?['pending'] ?? 0,
         };
+        _pendingReportsCount = pendingCount;
         _isLoading = false;
       });
     } catch (e) {
@@ -79,8 +86,19 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
             onPressed: _loadData,
           ),
           IconButton(
-            icon: Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            icon: Badge(
+              label: Text(_pendingReportsCount.toString()),
+              isLabelVisible: _pendingReportsCount > 0,
+              child: Icon(Icons.notifications_outlined),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const MaintenanceManagementScreen(),
+                ),
+              ).then((_) => _loadData()); // Refresh after returning
+            },
           ),
           SizedBox(width: 8),
         ],
@@ -484,7 +502,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
             break;
           case 1:
             // Navigate to Financial Screen
-            // Navigator.pushNamed(context, '/financial'); // Implement later
+            Navigator.pushNamed(context, '/financial');
             break;
           case 2:
             // Navigate to Room Management (Push instead of Replacement to keep back stack)
@@ -535,7 +553,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                 title: Text('Buat Tagihan'),
                 onTap: () {
                    Navigator.pop(context);
-                   // Navigate to create invoice
+                   Navigator.pushNamed(context, '/financial');
                 },
               ),
               ListTile(
@@ -544,6 +562,32 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/rooms');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.build_outlined, color: AppColors.primary),
+                title: Text('Kelola Laporan Kerusakan'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MaintenanceManagementScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.chat_bubble_outline, color: AppColors.primary),
+                title: Text('Pesan Tenant'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AdminTenantChatListScreen(),
+                    ),
+                  );
                 },
               ),
             ],
