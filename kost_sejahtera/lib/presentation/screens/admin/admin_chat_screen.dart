@@ -26,7 +26,7 @@ class _AdminTenantChatListScreenState extends State<AdminTenantChatListScreen> {
   Future<void> _loadTenants() async {
     setState(() => _isLoading = true);
     try {
-      final tenants = await _tenantService.getAllTenants();
+      final tenants = await _tenantService.getTenants();
       setState(() {
         _tenants = tenants;
         _isLoading = false;

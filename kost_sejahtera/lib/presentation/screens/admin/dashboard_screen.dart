@@ -7,6 +7,7 @@ import '../../../core/services/dashboard_service.dart';
 import '../../../core/services/maintenance_service.dart';
 import 'maintenance_management_screen.dart';
 import 'admin_chat_screen.dart';
+import 'admin_profile_screen.dart';
 
 class DashboardAdminScreen extends StatefulWidget {
   const DashboardAdminScreen({Key? key}) : super(key: key);
@@ -98,6 +99,18 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                   builder: (_) => const MaintenanceManagementScreen(),
                 ),
               ).then((_) => _loadData()); // Refresh after returning
+            },
+          ),
+           SizedBox(width: 8),
+          IconButton(
+            icon: Icon(Icons.account_circle),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AdminProfileScreen(),
+                ),
+              );
             },
           ),
           SizedBox(width: 8),
