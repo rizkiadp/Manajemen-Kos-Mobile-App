@@ -13,12 +13,12 @@ async function seed() {
        VALUES ($1, $2, $3, $4, $5) 
        ON CONFLICT (email) DO NOTHING
        RETURNING id`,
-            ['admin@kostsejahtera.com', hashedPassword, 'Admin', '08123456789', 'admin']
+            ['admin@kost.com', hashedPassword, 'Admin', '08123456789', 'admin']
         );
 
         if (adminResult.rows.length > 0) {
             console.log('✅ Admin user created');
-            console.log('   Email: admin@kostsejahtera.com');
+            console.log('   Email: admin@kost.com');
             console.log('   Password: admin123');
         } else {
             console.log('ℹ️  Admin user already exists');
