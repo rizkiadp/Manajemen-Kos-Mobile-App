@@ -12,6 +12,7 @@ import 'invoices_screen.dart';
 import 'payment_history_screen.dart';
 import 'profile_screen.dart';
 import 'general_chat_screen.dart';
+import 'rules_screen.dart';
 
 class TenantDashboardScreen extends StatefulWidget {
   const TenantDashboardScreen({Key? key}) : super(key: key);
@@ -477,7 +478,14 @@ class _TenantDashboardScreenState extends State<TenantDashboardScreen> {
                     SizedBox(width: 12),
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const RulesScreen(),
+                            ),
+                          );
+                        },
                         icon: Icon(Icons.description_outlined),
                         label: Text('Tata Tertib'),
                         style: OutlinedButton.styleFrom(
