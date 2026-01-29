@@ -1,0 +1,262 @@
+### Health Check
+GET http://localhost:3000/health
+
+###
+
+### ========== AUTHENTICATION ==========
+
+### Login Admin
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@kostsejahtera.com",
+  "password": "admin123"
+}
+
+###
+
+### Login Tenant
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "budi@example.com",
+  "password": "tenant123"
+}
+
+###
+
+### Get Current User
+GET http://localhost:3000/api/auth/me
+Authorization: Bearer YOUR_TOKEN_HERE
+
+###
+
+### ========== DASHBOARD ==========
+
+### Get Admin Dashboard Stats
+GET http://localhost:3000/api/dashboard/admin
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Get Tenant Dashboard
+GET http://localhost:3000/api/dashboard/tenant
+Authorization: Bearer YOUR_TENANT_TOKEN
+
+###
+
+### Get Financial Trend
+GET http://localhost:3000/api/dashboard/financial-trend
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### ========== ROOMS ==========
+
+### Get All Rooms
+GET http://localhost:3000/api/rooms
+
+###
+
+### Get Rooms - Filter VIP
+GET http://localhost:3000/api/rooms?type=VIP
+
+###
+
+### Get Rooms - Available Only
+GET http://localhost:3000/api/rooms?available=true
+
+###
+
+### Get Room by ID
+GET http://localhost:3000/api/rooms/1
+
+###
+
+### Create Room
+POST http://localhost:3000/api/rooms
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "room_number": "D-401",
+  "type": "VIP",
+  "floor": 4,
+  "wing": "Kanan",
+  "price": 2700000,
+  "facilities": ["AC", "WiFi", "KM Dalam", "Balkon", "TV"]
+}
+
+###
+
+### Update Room
+PUT http://localhost:3000/api/rooms/1
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "price": 2600000,
+  "is_available": true
+}
+
+###
+
+### Delete Room
+DELETE http://localhost:3000/api/rooms/6
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### ========== TENANTS ==========
+
+### Get All Tenants
+GET http://localhost:3000/api/tenants
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Get My Tenant Data
+GET http://localhost:3000/api/tenants/me
+Authorization: Bearer YOUR_TENANT_TOKEN
+
+###
+
+### Get Tenant by ID
+GET http://localhost:3000/api/tenants/1
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Create Tenant
+POST http://localhost:3000/api/tenants
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "room_id": 2,
+  "nik": "3201234567890124",
+  "move_in_date": "2024-02-01"
+}
+
+###
+
+### Update Tenant
+PUT http://localhost:3000/api/tenants/1
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "payment_status": "paid"
+}
+
+###
+
+### ========== INVOICES ==========
+
+### Get All Invoices
+GET http://localhost:3000/api/invoices
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Get My Invoices
+GET http://localhost:3000/api/invoices/me
+Authorization: Bearer YOUR_TENANT_TOKEN
+
+###
+
+### Get Invoice by ID
+GET http://localhost:3000/api/invoices/1
+Authorization: Bearer YOUR_TOKEN
+
+###
+
+### Create Invoice
+POST http://localhost:3000/api/invoices
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "tenant_id": 1,
+  "room_id": 1,
+  "period": "Februari 2024",
+  "issue_date": "2024-02-01",
+  "due_date": "2024-03-05",
+  "items": [
+    { "description": "Sewa Kamar", "amount": 2000000 },
+    { "description": "Listrik", "amount": 250000 },
+    { "description": "Air", "amount": 100000 }
+  ],
+  "discount": 0
+}
+
+###
+
+### Update Invoice Status
+PUT http://localhost:3000/api/invoices/1
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "status": "paid"
+}
+
+###
+
+### ========== TRANSACTIONS ==========
+
+### Get All Transactions
+GET http://localhost:3000/api/transactions
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Get Transactions - Filter by Type
+GET http://localhost:3000/api/transactions?type=expense
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Get Transaction Summary
+GET http://localhost:3000/api/transactions/summary
+Authorization: Bearer YOUR_ADMIN_TOKEN
+
+###
+
+### Create Transaction
+POST http://localhost:3000/api/transactions
+Authorization: Bearer YOUR_ADMIN_TOKEN
+Content-Type: application/json
+
+{
+  "type": "expense",
+  "category": "Maintenance",
+  "amount": 500000,
+  "description": "Perbaikan AC kamar A-101",
+  "date": "2024-01-15"
+}
+
+###
+
+### ========== PAYMENTS ==========
+
+### Create Payment Transaction
+POST http://localhost:3000/api/payments/create-transaction
+Authorization: Bearer YOUR_TENANT_TOKEN
+Content-Type: application/json
+
+{
+  "invoice_id": 1,
+  "payment_method": "bank_transfer"
+}
+
+###
+
+### Check Payment Status
+GET http://localhost:3000/api/payments/status/INV-2024-001
+Authorization: Bearer YOUR_TOKEN
+
+###

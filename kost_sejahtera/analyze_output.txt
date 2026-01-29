@@ -1,0 +1,93 @@
+Analyzing tenant_management_screen.dart...                      
+
+warning - Unused import: '../../widgets/common/custom_button.dart' - lib\presentation\screens\admin\tenant_management_screen.dart:6:8 - unused_import
+   info - Parameter 'key' could be a super parameter - lib\presentation\screens\admin\tenant_management_screen.dart:12:9 - use_super_parameters
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:75:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:76:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:80:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:85:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:85:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:97:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:97:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:112:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:115:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:124:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:129:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:134:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:145:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:151:28 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:172:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:177:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:177:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:179:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:179:37 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:183:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:199:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:200:16 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:202:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:215:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:216:16 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\screens\admin\tenant_management_screen.dart:222:33 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:224:21 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\screens\admin\tenant_management_screen.dart:235:52 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:238:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:245:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:254:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:262:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:264:32 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\screens\admin\tenant_management_screen.dart:266:61 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\presentation\screens\admin\tenant_management_screen.dart:266:95 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:284:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:293:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:301:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:309:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:315:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:323:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:324:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:327:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:331:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:332:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:377:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:388:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:395:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:402:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:409:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:411:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:413:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:415:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:415:59 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:421:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:423:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:432:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:434:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:448:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:457:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:468:24 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:478:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:478:47 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\screens\admin\tenant_management_screen.dart:494:41 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\screens\admin\tenant_management_screen.dart:496:48 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:497:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:497:47 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\screens\admin\tenant_management_screen.dart:501:48 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:507:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:507:62 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:508:23 - prefer_const_constructors
+   info - The local variable '_isSubmitting' starts with an underscore - lib\presentation\screens\admin\tenant_management_screen.dart:522:10 - no_leading_underscores_for_local_identifiers
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:529:20 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:535:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:536:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:543:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:544:30 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:555:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:563:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:576:24 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\screens\admin\tenant_management_screen.dart:592:41 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\screens\admin\tenant_management_screen.dart:594:48 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:595:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:595:47 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\screens\admin\tenant_management_screen.dart:599:48 - use_build_context_synchronously
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:604:40 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:604:79 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\presentation\screens\admin\tenant_management_screen.dart:604:129 - prefer_const_constructors
+
