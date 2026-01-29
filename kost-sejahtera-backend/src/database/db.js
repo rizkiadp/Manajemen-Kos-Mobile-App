@@ -20,14 +20,9 @@ console.log('   Trimmed Length:', process.env.DB_PASSWORD?.trim().length);
 console.log('   First/Last Char:', process.env.DB_PASSWORD?.[0], process.env.DB_PASSWORD?.slice(-1));
 
 const pool = new Pool({
-  host: process.env.DB_HOST?.trim(),
-  port: process.env.DB_PORT?.trim(),
-  database: process.env.DB_NAME?.trim(),
-  user: process.env.DB_USER?.trim(),
-  password: process.env.DB_PASSWORD?.trim(),
+  connectionString: `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=require`,
   ssl: {
-    rejectUnauthorized: false, // Required for Neon
-    require: true // Force SSL
+    rejectUnauthorized: false
   },
   max: 20,
   idleTimeoutMillis: 30000,
