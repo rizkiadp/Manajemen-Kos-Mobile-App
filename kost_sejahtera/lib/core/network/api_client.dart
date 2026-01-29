@@ -10,8 +10,8 @@ class ApiClient {
 
   ApiClient._internal() {
     _dio = Dio(BaseOptions(
-      baseUrl: 'http://localhost:3000/api', // Web/Chrome
-      // baseUrl: 'http://10.0.2.2:3000/api', // Android Emulator
+      // baseUrl: 'http://localhost:3000/api', // Localhost
+      baseUrl: 'https://manajemen-kos-mobile-app.vercel.app/api', // Vercel Production
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {
