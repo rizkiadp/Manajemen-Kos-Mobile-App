@@ -243,10 +243,15 @@ exports.handleWebhook = async (req, res) => {
     } catch (error) {
         console.error('Webhook error details:', error);
         console.error('Error stack:', error.stack);
+
+        // Return detailed error for debugging (including code version check if possible)
+        const isSslError = error.message.includes('ssl') || error.message.includes('insecure');
         res.status(500).json({
             success: false,
             message: 'Webhook error',
-            error: error.message
+            error: error.message,
+            diagnosis: isSslError ? 'SSL Connection Issue - Check Vercel Logs for [v1.0.5] tag' : 'Other Error',
+            deploy_version: 'v1.0.5-FIX-SSL'
         });
     }
 };

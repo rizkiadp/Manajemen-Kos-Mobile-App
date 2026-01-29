@@ -20,22 +20,24 @@ console.log('   Trimmed Length:', process.env.DB_PASSWORD?.trim().length);
 console.log('   First/Last Char:', process.env.DB_PASSWORD?.[0], process.env.DB_PASSWORD?.slice(-1));
 
 const pool = new Pool({
-  connectionString: `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=require`,
-  ssl: {
-    rejectUnauthorized: false
-  },
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  connectionString: process.env.DATABASE_URL || `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?sslmode=require`,
+  ssl: true, // Shorthand for "require" and usually implies rejectUnauthorized: false in some cloud envs, but let's be safe:
+  // ssl: { rejectUnauthorized: false } <-- Neon often needs this explicitly if CA not provided.
+  // Let's stick to object but simpler:
 });
+
+// OVERRIDE for safety (some pg versions need object)
+pool.options.ssl = { rejectUnauthorized: false, require: true };
+
+// Debug tag
+const CODE_VERSION = 'v1.0.5-FIX-SSL';
 
 // Test connection
 pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
+  console.log(`✅ [${CODE_VERSION}] Connected to PostgreSQL`);
 });
-
 pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
+  console.error(`❌ [${CODE_VERSION}] Idle Client Error:`, err);
   process.exit(-1);
 });
 
