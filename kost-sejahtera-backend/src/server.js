@@ -21,6 +21,37 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api', routes);
 
+// DEBUG DATABASE ROUTE (Temporary)
+const db = require('./database/db');
+app.get('/api/test-db', async (req, res) => {
+    try {
+        const result = await db.query('SELECT NOW() as time');
+        res.json({
+            success: true,
+            message: 'Database Connected!',
+            time: result.rows[0].time,
+            config_check: {
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                db: process.env.DB_NAME,
+                ssl_mode: 'required'
+            }
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Database Connection Failed',
+            error: err.message,
+            env_debug: {
+                HOST_Set: !!process.env.DB_HOST,
+                USER_Set: !!process.env.DB_USER,
+                PASS_Set: !!process.env.DB_PASSWORD,
+                DB_Set: !!process.env.DB_NAME
+            }
+        });
+    }
+});
+
 // Health check
 app.get('/health', (req, res) => {
     res.json({
