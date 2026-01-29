@@ -26,11 +26,12 @@ const pool = new Pool({
   user: process.env.DB_USER?.trim(),
   password: process.env.DB_PASSWORD?.trim(),
   ssl: {
-    rejectUnauthorized: false // Required for Neon/Render
+    rejectUnauthorized: false, // Required for Neon
+    require: true // Force SSL
   },
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000, // Increased timeout
+  connectionTimeoutMillis: 10000,
 });
 
 // Test connection
