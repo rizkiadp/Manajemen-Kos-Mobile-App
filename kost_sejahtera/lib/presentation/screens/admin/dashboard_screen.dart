@@ -46,7 +46,6 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
       final data = await _dashboardService.getDashboardStats();
       final pendingCount = await _maintenanceService.getPendingCount();
       setState(() {
-        // Flatten the nested API response to match UI expectations
         _stats = {
           'totalRooms': data['rooms']?['total'] ?? 0,
           'occupiedRooms': data['rooms']?['occupied'] ?? 0,
@@ -79,18 +78,23 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: Text('Dashboard Admin'),
+        title: Text('Dashboard', style: AppTextStyles.h3),
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        scrolledUnderElevation: 2,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
             onPressed: _loadData,
           ),
           IconButton(
             icon: Badge(
               label: Text(_pendingReportsCount.toString()),
               isLabelVisible: _pendingReportsCount > 0,
-              child: Icon(Icons.notifications_outlined),
+              backgroundColor: AppColors.danger,
+              child: const Icon(Icons.notifications_outlined),
             ),
             onPressed: () {
               Navigator.push(
@@ -98,53 +102,49 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                 MaterialPageRoute(
                   builder: (_) => const MaintenanceManagementScreen(),
                 ),
-              ).then((_) => _loadData()); // Refresh after returning
+              ).then((_) => _loadData());
             },
           ),
-           SizedBox(width: 8),
-          IconButton(
-            icon: Icon(Icons.account_circle),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AdminProfileScreen(),
-                ),
-              );
-            },
+          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: CircleAvatar(
+              backgroundColor: AppColors.backgroundLight,
+              child: IconButton(
+                icon: const Icon(Icons.person_outline, color: AppColors.textPrimary),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AdminProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
-          SizedBox(width: 8),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
               onRefresh: _loadData,
               child: SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.all(16),
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Greeting
                     Text(
-                      'Selamat Datang, Admin 👋',
-                      style: AppTextStyles.h2,
+                      'Ringkasan Properti',
+                      style: AppTextStyles.h4,
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Berikut ringkasan properti Anda hari ini',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    
-                    SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     
                     // Financial Summary Card
                     _buildFinancialSummaryCard(),
                     
-                    SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     
                     // Stats Grid
                     Row(
@@ -153,12 +153,12 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                           child: _buildStatCard(
                             'Kamar Terisi',
                             _stats['occupiedRooms'].toString(),
-                            '${_stats['occupancyRate']}%',
+                            '${_stats['occupancyRate']}% Full',
                             AppColors.success,
-                            Icons.meeting_room,
+                            Icons.meeting_room_rounded,
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: _buildStatCard(
                             'Kamar Kosong',
@@ -171,7 +171,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                       ],
                     ),
                     
-                    SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     
                     Row(
                       children: [
@@ -179,76 +179,101 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                           child: _buildStatCard(
                             'Penghuni Aktif',
                             _stats['activeTenants'].toString(),
-                            'Total',
+                            'Total Tenant',
                             AppColors.info,
-                            Icons.people_outline,
+                            Icons.people_alt_outlined,
                           ),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: _buildStatCard(
                             'Tagihan Pending',
                             _stats['pendingInvoices'].toString(),
-                            'Perlu tindakan',
+                            'Perlu Tindakan',
                             AppColors.danger,
-                            Icons.receipt_long_outlined,
+                            Icons.receipt_long_rounded,
                           ),
                         ),
                       ],
                     ),
                     
-                    SizedBox(height: 24),
+                    const SizedBox(height: 32),
                     
-                    // Occupancy Chart
-                    Text(
-                      'Tingkat Hunian',
-                      style: AppTextStyles.h3,
+                    // Charts Section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Analisis', style: AppTextStyles.h4),
+                      ],
                     ),
-                    SizedBox(height: 16),
-                    _buildOccupancyChart(),
+                    const SizedBox(height: 16),
                     
-                    SizedBox(height: 24),
-                    
-                    // Financial Trend
-                    Text(
-                      'Tren Keuangan',
-                      style: AppTextStyles.h3,
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.divider),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Tingkat Hunian', style: AppTextStyles.h4),
+                          const SizedBox(height: 24),
+                          _buildOccupancyChart(),
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 16),
-                    _buildFinancialTrendChart(),
+
+                    const SizedBox(height: 20),
+
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.divider),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Tren Keuangan', style: AppTextStyles.h4),
+                          const SizedBox(height: 24),
+                          _buildFinancialTrendChart(),
+                        ],
+                      ),
+                    ),
                     
-                    SizedBox(height: 24),
-                    
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
       bottomNavigationBar: _buildBottomNavBar(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showQuickActions();
-        },
-        backgroundColor: AppColors.primary,
-        child: Icon(Icons.add, color: AppColors.textPrimary),
+        onPressed: _showQuickActions,
+        backgroundColor: AppColors.accent,
+        elevation: 4,
+        child: const Icon(Icons.add_rounded, color: AppColors.white, size: 28),
       ),
     );
   }
 
   Widget _buildFinancialSummaryCard() {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppColors.primary, AppColors.primaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
-            blurRadius: 12,
-            offset: Offset(0, 4),
+            color: AppColors.primary.withOpacity(0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -259,26 +284,27 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Keuntungan Bersih',
+                'Profit Bersih (Bulan Ini)',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textPrimary,
+                  color: AppColors.white.withOpacity(0.8),
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.success.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.success.withOpacity(0.3)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.trending_up, size: 16, color: AppColors.success),
-                    SizedBox(width: 4),
+                    const Icon(Icons.trending_up, size: 14, color: AppColors.success),
+                    const SizedBox(width: 4),
                     Text(
-                      '+12.5%', // Placeholder for trend
-                      style: AppTextStyles.bodySmall.copyWith(
+                      'Stabil',
+                      style: AppTextStyles.caption.copyWith(
                         color: AppColors.success,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -286,17 +312,16 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             _formatCurrency(_stats['netIncome']),
             style: AppTextStyles.h1.copyWith(
-              color: AppColors.textPrimary,
-              fontSize: 32,
+              color: AppColors.white,
+              fontSize: 36,
+              letterSpacing: -1,
             ),
           ),
-          SizedBox(height: 16),
-          Divider(color: AppColors.textPrimary.withOpacity(0.2)),
-          SizedBox(height: 16),
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
@@ -305,35 +330,39 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
                   children: [
                     Text(
                       'Pemasukan',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textPrimary.withOpacity(0.7),
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.white.withOpacity(0.6),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       _formatCurrency(_stats['totalIncome']),
                       style: AppTextStyles.h4.copyWith(
-                        color: AppColors.textPrimary,
+                        color: AppColors.white,
+                        fontSize: 18,
                       ),
                     ),
                   ],
                 ),
               ),
+              Container(width: 1, height: 40, color: AppColors.white.withOpacity(0.1)),
+              const SizedBox(width: 24),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Pengeluaran',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textPrimary.withOpacity(0.7),
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.white.withOpacity(0.6),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       _formatCurrency(_stats['totalExpense']),
                       style: AppTextStyles.h4.copyWith(
-                        color: AppColors.textPrimary,
+                        color: AppColors.white,
+                        fontSize: 18,
                       ),
                     ),
                   ],
@@ -354,49 +383,46 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
     IconData icon,
   ) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.divider),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: const Color(0xFF64748B).withOpacity(0.04), // Soft slate shadow
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 22),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             value,
-            style: AppTextStyles.h2,
+            style: AppTextStyles.h2.copyWith(fontSize: 28),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             title,
-            style: AppTextStyles.bodySmall,
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 8),
           Text(
             subtitle,
             style: AppTextStyles.caption.copyWith(
               color: color,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -409,51 +435,43 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
     final double empty = (_stats['emptyRooms'] as num).toDouble();
     final double total = occupied + empty;
     
-    // Prevent division by zero
     if (total == 0) {
-      return Container(
+      return SizedBox(
         height: 200,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(12),
+        child: Center(
+          child: Text(
+            "Belum ada data kamar",
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+          ),
         ),
-        child: Center(child: Text("Belum ada data kamar")),
       );
     }
 
-    final occupiedPercentage = (occupied / total * 100).toStringAsFixed(1);
-    final emptyPercentage = (empty / total * 100).toStringAsFixed(1);
-
-    return Container(
-      height: 200,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
+    return SizedBox(
+      height: 220,
       child: PieChart(
         PieChartData(
-          sectionsSpace: 2,
-          centerSpaceRadius: 50,
+          sectionsSpace: 4,
+          centerSpaceRadius: 40,
           sections: [
             PieChartSectionData(
               value: occupied,
-              title: '$occupiedPercentage%',
-              color: AppColors.success,
-              radius: 50,
-              titleStyle: AppTextStyles.bodyMedium.copyWith(
+              title: '${(occupied/total*100).toStringAsFixed(0)}%',
+              color: AppColors.accent,
+              radius: 60,
+              titleStyle: AppTextStyles.bodyLarge.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             PieChartSectionData(
               value: empty,
-              title: '$emptyPercentage%',
-              color: AppColors.greyLight,
+              title: '${(empty/total*100).toStringAsFixed(0)}%',
+              color: AppColors.divider, // Use divider color for empty
+              showTitle: true,
               radius: 50,
-              titleStyle: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
+              titleStyle: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -464,35 +482,57 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   }
 
   Widget _buildFinancialTrendChart() {
-    return Container(
+    return SizedBox(
       height: 200,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
       child: LineChart(
         LineChartData(
-          gridData: FlGridData(show: false),
-          titlesData: FlTitlesData(show: false),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            horizontalInterval: 1,
+            getDrawingHorizontalLine: (value) {
+              return FlLine(
+                color: AppColors.divider.withOpacity(0.5),
+                strokeWidth: 1,
+              );
+            },
+          ),
+          titlesData: FlTitlesData(
+            show: true,
+            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          ),
           borderData: FlBorderData(show: false),
           lineBarsData: [
             LineChartBarData(
               spots: [
-                FlSpot(0, 3),
-                FlSpot(1, 4),
-                FlSpot(2, 3.5),
-                FlSpot(3, 5),
-                FlSpot(4, 4.5),
-                FlSpot(5, 6),
+                const FlSpot(0, 3),
+                const FlSpot(1, 4),
+                const FlSpot(2, 3.5),
+                const FlSpot(3, 5),
+                const FlSpot(4, 4.5),
+                const FlSpot(5, 6),
               ],
               isCurved: true,
-              color: AppColors.primary,
-              barWidth: 3,
-              dotData: FlDotData(show: true),
+              color: AppColors.accent,
+              barWidth: 4,
+              isStrokeCapRound: true,
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) {
+                  return FlDotCirclePainter(
+                    radius: 4,
+                    color: AppColors.white,
+                    strokeWidth: 2,
+                    strokeColor: AppColors.accent,
+                  );
+                },
+              ),
               belowBarData: BarAreaData(
                 show: true,
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.accent.withOpacity(0.1),
               ),
             ),
           ],
@@ -502,111 +542,156 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   }
 
   Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-        
-        switch (index) {
-          case 0:
-            // Do nothing, already here
-            break;
-          case 1:
-            // Navigate to Financial Screen
-            Navigator.pushNamed(context, '/financial');
-            break;
-          case 2:
-            // Navigate to Room Management (Push instead of Replacement to keep back stack)
-            Navigator.pushNamed(context, '/rooms');
-            break;
-          case 3:
-             // Navigate to Tenant Management
-             Navigator.pushNamed(context, '/tenants');
-            break;
-        }
-      },
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: AppColors.textSecondary,
-      items: [
-        BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
-        BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Keuangan'),
-        BottomNavigationBarItem(icon: Icon(Icons.meeting_room_outlined), label: 'Kamar'),
-        BottomNavigationBarItem(icon: Icon(Icons.people_outline), label: 'Penghuni'),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
+      ),
+      child: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          switch (index) {
+            case 1:
+              Navigator.pushNamed(context, '/financial');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/rooms');
+              break;
+            case 3:
+               Navigator.pushNamed(context, '/tenants');
+              break;
+          }
+        },
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        indicatorColor: AppColors.primary.withOpacity(0.1),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard, color: AppColors.primary),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.account_balance_wallet_outlined),
+            selectedIcon: Icon(Icons.account_balance_wallet, color: AppColors.primary),
+            label: 'Keuangan',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.meeting_room_outlined),
+            selectedIcon: Icon(Icons.meeting_room, color: AppColors.primary),
+            label: 'Kamar',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.people_outlined),
+            selectedIcon: Icon(Icons.people, color: AppColors.primary),
+            label: 'Penghuni',
+          ),
+        ],
+      ),
     );
   }
 
   void _showQuickActions() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
+      backgroundColor: AppColors.white,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               Text('Aksi Cepat', style: AppTextStyles.h3),
-              SizedBox(height: 24),
-              ListTile(
-                leading: Icon(Icons.person_add, color: AppColors.primary),
-                title: Text('Tambah Penghuni Baru'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/tenants');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.receipt, color: AppColors.primary),
-                title: Text('Buat Tagihan'),
-                onTap: () {
-                   Navigator.pop(context);
-                   Navigator.pushNamed(context, '/financial');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.add_home, color: AppColors.primary),
-                title: Text('Tambah Kamar'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/rooms');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.build_outlined, color: AppColors.primary),
-                title: Text('Kelola Laporan Kerusakan'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MaintenanceManagementScreen(),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.chat_bubble_outline, color: AppColors.primary),
-                title: Text('Pesan Tenant'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AdminTenantChatListScreen(),
-                    ),
-                  );
-                },
-              ),
+              const SizedBox(height: 24),
+              _buildQuickActionItem(
+                Icons.person_add_rounded, 'Tambah Penghuni', () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/tenants');
+              }),
+              _buildQuickActionItem(
+                Icons.receipt_long_rounded, 'Buat Tagihan', () {
+                 Navigator.pop(context);
+                 Navigator.pushNamed(context, '/financial');
+              }),
+              _buildQuickActionItem(
+                Icons.add_home_rounded, 'Tambah Kamar', () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/rooms');
+              }),
+              _buildQuickActionItem(
+                Icons.build_rounded, 'Laporan & Maintenance', () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MaintenanceManagementScreen(),
+                  ),
+                );
+              }),
+              _buildQuickActionItem(
+                Icons.chat_bubble_rounded, 'Pesan Tenant', () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AdminTenantChatListScreen(),
+                  ),
+                );
+              }),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildQuickActionItem(IconData icon, String title, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: AppColors.primary, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                title,
+                style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const Spacer(),
+              Icon(Icons.chevron_right, color: AppColors.textSecondary),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
