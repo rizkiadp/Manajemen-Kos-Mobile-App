@@ -1,7 +1,7 @@
 -- Kost Sejahtera Database Schema
 
 -- Users Table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE users (
 );
 
 -- Rooms Table
-CREATE TABLE rooms (
+CREATE TABLE IF NOT EXISTS rooms (
     id SERIAL PRIMARY KEY,
     room_number VARCHAR(50) UNIQUE NOT NULL,
     type VARCHAR(50) NOT NULL CHECK (type IN ('VIP', 'Standard', 'Reguler')),
@@ -29,7 +29,7 @@ CREATE TABLE rooms (
 );
 
 -- Tenants Table
-CREATE TABLE tenants (
+CREATE TABLE IF NOT EXISTS tenants (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     room_id INTEGER REFERENCES rooms(id) ON DELETE SET NULL,
@@ -43,7 +43,7 @@ CREATE TABLE tenants (
 );
 
 -- Invoices Table
-CREATE TABLE invoices (
+CREATE TABLE IF NOT EXISTS invoices (
     id SERIAL PRIMARY KEY,
     invoice_number VARCHAR(50) UNIQUE NOT NULL,
     tenant_id INTEGER REFERENCES tenants(id) ON DELETE CASCADE,
@@ -63,7 +63,7 @@ CREATE TABLE invoices (
 );
 
 -- Transactions Table
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     type VARCHAR(20) NOT NULL CHECK (type IN ('income', 'expense')),
     category VARCHAR(100) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE transactions (
 );
 
 -- Payments Table
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
     id SERIAL PRIMARY KEY,
     invoice_id INTEGER REFERENCES invoices(id) ON DELETE CASCADE,
     tenant_id INTEGER REFERENCES tenants(id) ON DELETE CASCADE,
@@ -130,7 +130,7 @@ CREATE TRIGGER update_payments_updated_at BEFORE UPDATE ON payments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Maintenance Reports Table
-CREATE TABLE maintenance_reports (
+CREATE TABLE IF NOT EXISTS maintenance_reports (
     id SERIAL PRIMARY KEY,
     tenant_id INTEGER REFERENCES tenants(id) ON DELETE CASCADE,
     room_id INTEGER REFERENCES rooms(id) ON DELETE SET NULL,
@@ -153,7 +153,7 @@ CREATE TRIGGER update_maintenance_updated_at BEFORE UPDATE ON maintenance_report
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Messages Table
-CREATE TABLE messages (
+CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
