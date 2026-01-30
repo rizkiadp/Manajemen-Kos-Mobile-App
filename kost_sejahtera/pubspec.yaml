@@ -18,7 +18,7 @@ dependencies:
   dio: ^5.4.0
   
   # UI Components
-  google_fonts: ^6.1.0
+  google_fonts: ^6.3.0
   flutter_svg: ^2.0.9
   cached_network_image: ^3.3.0
   

@@ -35,7 +35,7 @@ class CustomButton extends StatelessWidget {
           backgroundColor: isOutlined
               ? Colors.transparent
               : (backgroundColor ?? AppColors.primary),
-          foregroundColor: textColor ?? AppColors.textPrimary,
+          foregroundColor: textColor ?? (isOutlined ? AppColors.primary : AppColors.white),
           elevation: isOutlined ? 0 : 2,
           side: isOutlined
               ? BorderSide(color: AppColors.primary, width: 2)

@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors - Changed to blue for better readability
-  static const Color primary = Color(0xFF2563EB); // Blue-600
-  static const Color primaryDark = Color(0xFF1D4ED8); // Blue-700
-  static const Color primaryLight = Color(0xFF3B82F6); // Blue-500
+  // Brand Colors - Professional & Corporate
+  static const Color primary = Color(0xFF0F172A); // Slate 900 (Deep Navy)
+  static const Color primaryDark = Color(0xFF020617); // Slate 950
+  static const Color primaryLight = Color(0xFF334155); // Slate 700
   
+  // Accent Colors - For CTAs and Highlights
+  static const Color accent = Color(0xFF0EA5E9); // Sky 500 (Vibrant Blue)
+  static const Color accentDark = Color(0xFF0284C7); // Sky 600
+  static const Color secondary = Color(0xFF10B981); // Emerald 500 (Success/Action)
+
   // Background Colors
-  static const Color backgroundLight = Color(0xFFF9FAFB); // Gray-50
-  static const Color backgroundDark = Color(0xFF111827); // Gray-900
+  static const Color backgroundLight = Color(0xFFF1F5F9); // Slate 100 (Cool Light Grey)
+  static const Color backgroundDark = Color(0xFF0F172A); // Slate 900
+  static const Color cardBackground = Color(0xFFFFFFFF);
   
-  // Text Colors - High contrast for readability
-  static const Color textPrimary = Color(0xFF111827); // Gray-900 (very dark)
-  static const Color textSecondary = Color(0xFF6B7280); // Gray-500 (medium)
+  // Text Colors
+  static const Color textPrimary = Color(0xFF0F172A); // Slate 900
+  static const Color textSecondary = Color(0xFF64748B); // Slate 500
+  static const Color textLight = Color(0xFF94A3B8); // Slate 400
   static const Color textWhite = Color(0xFFFFFFFF);
   
-  // Status Colors - Adjusted for better visibility
-  static const Color success = Color(0xFF10B981); // Green-500
-  static const Color danger = Color(0xFFEF4444); // Red-500
-  static const Color warning = Color(0xFFF59E0B); // Amber-500
-  static const Color info = Color(0xFF3B82F6); // Blue-500
+  // Status Colors
+  static const Color success = Color(0xFF10B981); // Emerald 500
+  static const Color danger = Color(0xFFEF4444); // Red 500
+  static const Color warning = Color(0xFFF59E0B); // Amber 500
+  static const Color info = Color(0xFF3B82F6); // Blue 500
   
-  // Neutral Colors
+  // Neutral / Utility
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
-  static const Color grey = Color(0xFF9CA3AF); // Gray-400
-  static const Color greyLight = Color(0xFFE5E7EB); // Gray-200
-  static const Color greyDark = Color(0xFF4B5563); // Gray-600
+  static const Color divider = Color(0xFFE2E8F0); // Slate 200
   
-  // Card & Surface
-  static const Color cardBackground = Color(0xFFFFFFFF);
-  static const Color surfaceLight = Color(0xFFF3F4F6); // Gray-100
-  
-  // Accent Colors
-  static const Color accent = Color(0xFF8B5CF6); // Purple-500
-  static const Color accentLight = Color(0xFFA78BFA); // Purple-400
+  // Input Fields
+  static const Color inputBackground = Color(0xFFFFFFFF);
+  static const Color inputBorder = Color(0xFFCBD5E1); // Slate 300
 }

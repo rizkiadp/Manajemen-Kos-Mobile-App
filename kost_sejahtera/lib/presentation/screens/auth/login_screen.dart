@@ -47,8 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (userRole != _selectedRole) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Anda login sebagai ${userRole == 'admin' ? 'Admin' : 'Penyewa'}. Silakan pilih role yang sesuai.'),
-              backgroundColor: Colors.orange,
+              content: Text('Akun Anda terdaftar sebagai ${userRole == 'admin' ? 'Admin' : 'Penyewa'}. Silakan ganti tab role.'),
+              backgroundColor: AppColors.warning,
             ),
           );
           return;
@@ -63,8 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Selamat datang, ${result['user']['name']}!'),
-            backgroundColor: Colors.green,
+            content: Text('Selamat datang kembali, ${result['user']['name']}'),
+            backgroundColor: AppColors.success,
           ),
         );
       } catch (e) {
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -85,155 +85,129 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Gradient
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.primary.withOpacity(0.8),
-                  AppColors.primary.withOpacity(0.4),
-                ],
-              ),
-            ),
-          ),
-          
-          // Content
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Selamat Datang di',
-                          style: AppTextStyles.h3.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Kos Las Vegas',
-                          style: AppTextStyles.h1.copyWith(
-                            color: AppColors.primary,
-                            fontSize: 36,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        Text(
-                          'Platform manajemen kos modern & terpercaya.',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
-                      ],
+      backgroundColor: AppColors.backgroundLight,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logo / Brand Icon
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
                     ),
-                  ),
+                  ],
                 ),
-                
-                // Login Form Card
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
-                      ),
+                child: const Icon(
+                  Icons.apartment_rounded,
+                  size: 40,
+                  color: AppColors.white,
+                ),
+              ),
+              const SizedBox(height: 32),
+              
+              Text(
+                'Kost Sejahtera',
+                style: AppTextStyles.h1,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Masuk untuk mengelola kos Anda',
+                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+
+              // Login Card
+              Container(
+                constraints: const BoxConstraints(maxWidth: 400),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withOpacity(0.05),
+                      blurRadius: 40,
+                      offset: const Offset(0, 10),
                     ),
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(24),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  ],
+                ),
+                padding: const EdgeInsets.all(32),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Role Tabs
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundLight,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
                           children: [
-                            // Role Switcher
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.backgroundLight,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(4),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildRoleTab('Penyewa', 'tenant'),
-                                  ),
-                                  Expanded(
-                                    child: _buildRoleTab('Admin', 'admin'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            
-                            SizedBox(height: 32),
-                            
-                            // Email Field
-                            CustomTextField(
-                              label: 'Email / Username',
-                              hint: 'Contoh: user@email.com',
-                              controller: _emailController,
-                              prefixIcon: Icons.person_outline,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Email tidak boleh kosong';
-                                }
-                                return null;
-                              },
-                            ),
-                            
-                            SizedBox(height: 20),
-                            
-                            // Password Field
-                            CustomTextField(
-                              label: 'Kata Sandi',
-                              hint: 'Password',
-                              controller: _passwordController,
-                              isPassword: true,
-                              prefixIcon: Icons.lock_outline,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Password tidak boleh kosong';
-                                }
-                                if (value.length < 6) {
-                                  return 'Password minimal 6 karakter';
-                                }
-                                return null;
-                              },
-                            ),
-                            
-                            SizedBox(height: 12),
-                            
-                            
-                            
-                            SizedBox(height: 24),
-                            
-                            // Login Button
-                            CustomButton(
-                              text: 'Masuk',
-                              onPressed: _handleLogin,
-                              isLoading: _isLoading,
-                              icon: Icons.arrow_forward,
-                            ),
+                            Expanded(child: _buildRoleTab('Penyewa', 'tenant')),
+                            Expanded(child: _buildRoleTab('Admin', 'admin')),
                           ],
                         ),
                       ),
-                    ),
+                      const SizedBox(height: 32),
+
+                      // Email
+                      CustomTextField(
+                        label: 'Email',
+                        hint: 'nama@email.com',
+                        controller: _emailController,
+                        prefixIcon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) => 
+                          (value?.isEmpty ?? true) ? 'Email wajib diisi' : null,
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Password
+                      CustomTextField(
+                        label: 'Password',
+                        hint: '••••••••',
+                        controller: _passwordController,
+                        isPassword: true,
+                        prefixIcon: Icons.lock_outline,
+                        validator: (value) => 
+                          (value == null || value.length < 6) ? 'Min. 6 karakter' : null,
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Button
+                      CustomButton(
+                        text: 'Masuk Sekarang',
+                        onPressed: _handleLogin,
+                        isLoading: _isLoading,
+                        icon: Icons.arrow_forward_rounded,
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              
+              const SizedBox(height: 32),
+              Text(
+                '© 2024 Kost Sejahtera. All rights reserved.',
+                style: AppTextStyles.caption.copyWith(color: AppColors.textLight),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -241,23 +215,27 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildRoleTab(String label, String role) {
     final isSelected = _selectedRole == role;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedRole = role;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12),
+      onTap: () => setState(() => _selectedRole = role),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? AppColors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: AppColors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ] : [],
         ),
         child: Center(
           child: Text(
             label,
-            style: AppTextStyles.button.copyWith(
-              color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
-            ),
+            style: isSelected 
+              ? AppTextStyles.label.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600)
+              : AppTextStyles.label.copyWith(color: AppColors.textSecondary),
           ),
         ),
       ),

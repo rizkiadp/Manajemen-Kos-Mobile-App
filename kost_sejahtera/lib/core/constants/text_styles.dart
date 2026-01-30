@@ -4,25 +4,27 @@ import 'colors.dart';
 
 class AppTextStyles {
   // Headings
-  static TextStyle h1 = GoogleFonts.inter(
+  static TextStyle h1 = GoogleFonts.plusJakartaSans(
     fontSize: 32,
     fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
+    letterSpacing: -1.0,
   );
   
-  static TextStyle h2 = GoogleFonts.inter(
+  static TextStyle h2 = GoogleFonts.plusJakartaSans(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
+    letterSpacing: -0.5,
   );
   
-  static TextStyle h3 = GoogleFonts.inter(
+  static TextStyle h3 = GoogleFonts.plusJakartaSans(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
   
-  static TextStyle h4 = GoogleFonts.inter(
+  static TextStyle h4 = GoogleFonts.plusJakartaSans(
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -48,10 +50,10 @@ class AppTextStyles {
   );
   
   // Button Text
-  static TextStyle button = GoogleFonts.inter(
+  static TextStyle button = GoogleFonts.plusJakartaSans(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
+    color: AppColors.white,
   );
   
   // Caption
