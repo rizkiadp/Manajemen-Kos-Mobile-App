@@ -36,4 +36,8 @@ class AppColors {
   // Input Fields
   static const Color inputBackground = Color(0xFFFFFFFF);
   static const Color inputBorder = Color(0xFFCBD5E1); // Slate 300
+
+  // Legacy/Compatibility Colors
+  static const Color grey = Color(0xFF64748B); // Slate 500
+  static const Color greyLight = Color(0xFFE2E8F0); // Slate 200
 }
