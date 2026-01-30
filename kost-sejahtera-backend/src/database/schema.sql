@@ -151,3 +151,18 @@ CREATE INDEX idx_maintenance_status ON maintenance_reports(status);
 
 CREATE TRIGGER update_maintenance_updated_at BEFORE UPDATE ON maintenance_reports
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Messages Table
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT false,
+    report_id INTEGER REFERENCES maintenance_reports(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_messages_sender ON messages(sender_id);
+CREATE INDEX idx_messages_receiver ON messages(receiver_id);
+CREATE INDEX idx_messages_report ON messages(report_id);
