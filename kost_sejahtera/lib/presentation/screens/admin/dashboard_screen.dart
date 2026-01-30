@@ -22,6 +22,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   final MaintenanceService _maintenanceService = MaintenanceService();
   bool _isLoading = true;
   int _pendingReportsCount = 0;
+  List<Map<String, dynamic>> _trendData = [];
   Map<String, dynamic> _stats = {
     'totalRooms': 0,
     'occupiedRooms': 0,
@@ -45,6 +46,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
     try {
       final data = await _dashboardService.getDashboardStats();
       final pendingCount = await _maintenanceService.getPendingCount();
+      final trend = await _dashboardService.getFinancialTrend();
       setState(() {
         _stats = {
           'totalRooms': data['rooms']?['total'] ?? 0,
@@ -57,6 +59,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
           'netIncome': data['financial']?['netIncome'] ?? 0,
           'pendingInvoices': data['invoices']?['pending'] ?? 0,
         };
+        _trendData = List<Map<String, dynamic>>.from(trend);
         _pendingReportsCount = pendingCount;
         _isLoading = false;
       });
@@ -482,6 +485,28 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
   }
 
   Widget _buildFinancialTrendChart() {
+    if (_trendData.isEmpty) {
+      return SizedBox(
+        height: 200,
+        child: Center(
+          child: Text(
+            'Belum ada data transaksi',
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+          ),
+        ),
+      );
+    }
+
+    // Convert trend data to chart spots
+    final spots = _trendData.asMap().entries.map((entry) {
+      final index = entry.key;
+      final data = entry.value;
+      final income = double.tryParse(data['income'].toString()) ?? 0;
+      final expense = double.tryParse(data['expense'].toString()) ?? 0;
+      final net = income - expense;
+      return FlSpot(index.toDouble(), net / 1000000); // Convert to millions for better display
+    }).toList();
+
     return SizedBox(
       height: 200,
       child: LineChart(
@@ -507,14 +532,7 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
           borderData: FlBorderData(show: false),
           lineBarsData: [
             LineChartBarData(
-              spots: [
-                const FlSpot(0, 3),
-                const FlSpot(1, 4),
-                const FlSpot(2, 3.5),
-                const FlSpot(3, 5),
-                const FlSpot(4, 4.5),
-                const FlSpot(5, 6),
-              ],
+              spots: spots,
               isCurved: true,
               color: AppColors.accent,
               barWidth: 4,
