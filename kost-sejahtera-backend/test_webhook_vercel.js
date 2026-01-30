@@ -10,7 +10,8 @@ const data = JSON.stringify({
 });
 
 const options = {
-    hostname: 'manajemen-kos-mobile-8od138kja-rizkis-projects-37bd2b95.vercel.app',
+    // hostname: 'manajemen-kos-mobile-8od138kja-rizkis-projects-37bd2b95.vercel.app', // <-- INI URL LAMA (Preview/Immutable)
+    hostname: 'manajemen-kos-mobile-app.vercel.app', // <-- INI URL PRODUCTION (Selalu Update)
     path: '/api/payments/webhook',
     method: 'POST',
     headers: {
