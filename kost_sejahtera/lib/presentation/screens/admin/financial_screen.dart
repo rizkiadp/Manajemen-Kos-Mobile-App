@@ -293,7 +293,7 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
       itemBuilder: (context, index) {
         final transaction = _transactions[index];
         final isIncome = transaction['type'] == 'income';
-        final amount = int.tryParse(transaction['amount'].toString()) ?? 0;
+        final amount = (double.tryParse(transaction['amount'].toString()) ?? 0).toInt();
         final date = DateTime.tryParse(transaction['date'] ?? '') ?? DateTime.now();
         
         return Container(
