@@ -68,6 +68,13 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
     return Scaffold(
       appBar: AppBar(
         title: Text('Keuangan'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _loadData,
+            tooltip: 'Refresh Data',
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,
