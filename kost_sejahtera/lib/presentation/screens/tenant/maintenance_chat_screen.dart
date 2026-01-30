@@ -110,8 +110,6 @@ class _MaintenanceChatScreenState extends State<MaintenanceChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat dengan Admin'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

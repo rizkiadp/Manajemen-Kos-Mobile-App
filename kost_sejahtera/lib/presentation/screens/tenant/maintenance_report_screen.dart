@@ -239,8 +239,6 @@ class _MaintenanceReportScreenState extends State<MaintenanceReportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Laporan Kerusakan'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
       ),
       body: _isLoading && _reports.isEmpty
           ? const Center(child: CircularProgressIndicator())

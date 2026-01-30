@@ -76,8 +76,6 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profil Admin'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

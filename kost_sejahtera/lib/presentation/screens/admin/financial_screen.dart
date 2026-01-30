@@ -89,24 +89,28 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateInvoiceDialog,
         backgroundColor: AppColors.primary,
-        icon: Icon(Icons.add, color: AppColors.textPrimary),
-        label: Text('Buat Tagihan', style: TextStyle(color: AppColors.textPrimary)),
+        icon: Icon(Icons.add, color: AppColors.white),
+        label: Text('Buat Tagihan', style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600)),
       ),
     );
   }
 
   Widget _buildSummaryTab() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildFinancialSummaryCard(),
-          SizedBox(height: 24),
-          Text('Pemasukan vs Pengeluaran', style: AppTextStyles.h3),
-          SizedBox(height: 16),
-          _buildFinancialChart(),
-        ],
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildFinancialSummaryCard(),
+            SizedBox(height: 24),
+            Text('Pemasukan vs Pengeluaran', style: AppTextStyles.h3),
+            SizedBox(height: 16),
+            _buildFinancialChart(),
+          ],
+        ),
       ),
     );
   }
@@ -134,12 +138,12 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
         children: [
           Text(
             'Total Saldo (Net)',
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
           ),
           SizedBox(height: 8),
           Text(
             _formatCurrency(_summary['net']),
-            style: AppTextStyles.h1.copyWith(color: AppColors.textPrimary, fontSize: 32),
+            style: AppTextStyles.h1.copyWith(color: AppColors.white, fontSize: 32),
           ),
           SizedBox(height: 24),
           Row(
@@ -152,13 +156,13 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
                       children: [
                         Icon(Icons.arrow_downward, color: AppColors.success, size: 16),
                         SizedBox(width: 4),
-                        Text('Pemasukan', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary)),
+                        Text('Pemasukan', style: AppTextStyles.bodySmall.copyWith(color: AppColors.white.withOpacity(0.8))),
                       ],
                     ),
                     SizedBox(height: 4),
                     Text(
                       _formatCurrency(_summary['income']?['total']),
-                      style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+                      style: AppTextStyles.h4.copyWith(color: AppColors.white),
                     ),
                   ],
                 ),
@@ -171,13 +175,13 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
                       children: [
                         Icon(Icons.arrow_upward, color: AppColors.danger, size: 16),
                         SizedBox(width: 4),
-                        Text('Pengeluaran', style: AppTextStyles.bodySmall.copyWith(color: AppColors.textPrimary)),
+                        Text('Pengeluaran', style: AppTextStyles.bodySmall.copyWith(color: AppColors.white.withOpacity(0.8))),
                       ],
                     ),
                     SizedBox(height: 4),
                     Text(
                       _formatCurrency(_summary['expense']?['total']),
-                      style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+                      style: AppTextStyles.h4.copyWith(color: AppColors.white),
                     ),
                   ],
                 ),
@@ -275,10 +279,15 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
     }
 
     if (_transactions.isEmpty) {
-      return Center(child: Text('Belum ada transaksi'));
+      return RefreshIndicator(
+        onRefresh: _loadData,
+        child: Center(child: Text('Belum ada transaksi')),
+      );
     }
 
-    return ListView.builder(
+    return RefreshIndicator(
+      onRefresh: _loadData,
+      child: ListView.builder(
       padding: EdgeInsets.all(16),
       itemCount: _transactions.length,
       itemBuilder: (context, index) {
@@ -336,6 +345,7 @@ class _FinancialScreenState extends State<FinancialScreen> with SingleTickerProv
           ),
         );
       },
+      ),
     );
   }
 

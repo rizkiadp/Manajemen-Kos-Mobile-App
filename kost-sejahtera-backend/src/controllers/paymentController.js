@@ -220,20 +220,22 @@ exports.handleWebhook = async (req, res) => {
                 );
 
                 if (invoiceResult.rows.length > 0) {
+                    const tenantId = invoiceResult.rows[0].tenant_id;
+
                     await db.query(
                         `UPDATE tenants 
                SET payment_status = 'paid', last_payment_date = CURRENT_TIMESTAMP
                WHERE id = $1`,
-                        [invoiceResult.rows[0].tenant_id]
+                        [tenantId]
+                    );
+
+                    // Create transaction record with tenant_id
+                    await db.query(
+                        `INSERT INTO transactions (type, category, amount, description, date, invoice_id, tenant_id, created_by)
+                 VALUES ('income', 'Sewa Kamar', $1, 'Pembayaran invoice', CURRENT_DATE, $2, $3, 1)`,
+                        [parseFloat(statusResponse.gross_amount), invoiceId, tenantId]
                     );
                 }
-
-                // Create transaction record
-                await db.query(
-                    `INSERT INTO transactions (type, category, amount, description, date, invoice_id, created_by)
-             VALUES ('income', 'Sewa Kamar', $1, 'Pembayaran invoice', CURRENT_DATE, $2, 1)`,
-                    [parseFloat(statusResponse.gross_amount), invoiceId]
-                );
 
                 console.log(`✅ Invoice #${invoiceId} marked as paid`);
             }

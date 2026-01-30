@@ -210,7 +210,7 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
                     backgroundColor: AppColors.white,
                     selectedColor: AppColors.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
                     ),
                   ),
                 );
@@ -245,10 +245,10 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
           _showAddTenantDialog();
         },
         backgroundColor: AppColors.primary,
-        icon: Icon(Icons.person_add, color: AppColors.textPrimary),
+        icon: Icon(Icons.person_add, color: AppColors.white),
         label: Text(
           'Tambah Penghuni',
-          style: TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -372,7 +372,11 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
                      _showEditTenantDialog(tenant);
                   },
                   icon: Icon(Icons.edit_outlined, size: 18),
-                  label: Text('Edit'),
+                  label: Text('Edit', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textPrimary,
+                    side: BorderSide(color: AppColors.greyLight),
+                  ),
                 ),
               ),
               if (isActive) ...[
@@ -381,20 +385,14 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => _moveOutTenant(tenant['id'], tenant['name']),
                     icon: Icon(Icons.exit_to_app, size: 18),
-                    label: Text('Keluar'),
-                    style: OutlinedButton.styleFrom(foregroundColor: AppColors.warning),
+                    label: Text('Keluar', style: TextStyle(color: AppColors.warning, fontWeight: FontWeight.w600)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.warning,
+                      side: BorderSide(color: AppColors.warning),
+                    ),
                   ),
                 ),
               ],
-              SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _deleteTenant(tenant['id']),
-                  icon: Icon(Icons.delete_outline, size: 18),
-                  label: Text('Hapus'),
-                  style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
-                ),
-              ),
             ],
           ),
         ],
@@ -485,6 +483,7 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
                     Text('Tidak ada kamar kosong', style: TextStyle(color: AppColors.danger))
                   else
                     DropdownButtonFormField<int>(
+                      isExpanded: true,
                       value: selectedRoomId,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -494,7 +493,11 @@ class _TenantManagementScreenState extends State<TenantManagementScreen> {
                       items: availableRooms.map((room) {
                         return DropdownMenuItem<int>(
                           value: room['id'],
-                          child: Text('${room['room_number']} (${room['type']}) - Rp ${room['price']}'),
+                          child: Text(
+                            '${room['room_number']} (${room['type']}) - Rp ${room['price']}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) => setDialogState(() => selectedRoomId = val),

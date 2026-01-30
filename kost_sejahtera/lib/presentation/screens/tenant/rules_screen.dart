@@ -10,9 +10,6 @@ class RulesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tata Tertib Kost'),
-        backgroundColor: AppColors.backgroundLight,
-        elevation: 0,
-        foregroundColor: AppColors.textPrimary,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),

@@ -61,8 +61,6 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Riwayat Pembayaran'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

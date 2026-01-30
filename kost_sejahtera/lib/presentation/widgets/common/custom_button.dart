@@ -65,7 +65,7 @@ class CustomButton extends StatelessWidget {
                   Text(
                     text,
                     style: AppTextStyles.button.copyWith(
-                      color: textColor ?? AppColors.textPrimary,
+                      color: textColor ?? (isOutlined ? AppColors.primary : AppColors.white),
                     ),
                   ),
                 ],

@@ -604,59 +604,61 @@ class _DashboardAdminScreenState extends State<DashboardAdminScreen> {
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.divider,
-                    borderRadius: BorderRadius.circular(2),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.divider,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text('Aksi Cepat', style: AppTextStyles.h3),
-              const SizedBox(height: 24),
-              _buildQuickActionItem(
-                Icons.person_add_rounded, 'Tambah Penghuni', () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/tenants');
-              }),
-              _buildQuickActionItem(
-                Icons.receipt_long_rounded, 'Buat Tagihan', () {
-                 Navigator.pop(context);
-                 Navigator.pushNamed(context, '/financial');
-              }),
-              _buildQuickActionItem(
-                Icons.add_home_rounded, 'Tambah Kamar', () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/rooms');
-              }),
-              _buildQuickActionItem(
-                Icons.build_rounded, 'Laporan & Maintenance', () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MaintenanceManagementScreen(),
-                  ),
-                );
-              }),
-              _buildQuickActionItem(
-                Icons.chat_bubble_rounded, 'Pesan Tenant', () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AdminTenantChatListScreen(),
-                  ),
-                );
-              }),
-            ],
+                const SizedBox(height: 24),
+                Text('Aksi Cepat', style: AppTextStyles.h3),
+                const SizedBox(height: 24),
+                _buildQuickActionItem(
+                  Icons.person_add_rounded, 'Tambah Penghuni', () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/tenants');
+                }),
+                _buildQuickActionItem(
+                  Icons.receipt_long_rounded, 'Buat Tagihan', () {
+                   Navigator.pop(context);
+                   Navigator.pushNamed(context, '/financial');
+                }),
+                _buildQuickActionItem(
+                  Icons.add_home_rounded, 'Tambah Kamar', () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/rooms');
+                }),
+                _buildQuickActionItem(
+                  Icons.build_rounded, 'Laporan & Maintenance', () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MaintenanceManagementScreen(),
+                    ),
+                  );
+                }),
+                _buildQuickActionItem(
+                  Icons.chat_bubble_rounded, 'Pesan Tenant', () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AdminTenantChatListScreen(),
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         );
       },

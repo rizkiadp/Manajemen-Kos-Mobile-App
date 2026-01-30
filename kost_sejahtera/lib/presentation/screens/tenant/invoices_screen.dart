@@ -51,8 +51,6 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tagihan'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

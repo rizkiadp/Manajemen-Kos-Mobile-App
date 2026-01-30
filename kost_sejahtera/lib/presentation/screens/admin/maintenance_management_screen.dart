@@ -103,8 +103,6 @@ class _MaintenanceManagementScreenState extends State<MaintenanceManagementScree
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kelola Laporan Kerusakan'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
       ),
       body: Column(
         children: [

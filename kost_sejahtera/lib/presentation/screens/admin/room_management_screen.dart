@@ -158,7 +158,7 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
                     backgroundColor: AppColors.white,
                     selectedColor: AppColors.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
                     ),
                   ),
                 );
@@ -193,10 +193,10 @@ class _RoomManagementScreenState extends State<RoomManagementScreen> {
           _showAddRoomDialog();
         },
         backgroundColor: AppColors.primary,
-        icon: Icon(Icons.add, color: AppColors.textPrimary),
+        icon: Icon(Icons.add, color: AppColors.white),
         label: Text(
           'Tambah Kamar',
-          style: TextStyle(color: AppColors.textPrimary),
+          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.w600),
         ),
       ),
     );

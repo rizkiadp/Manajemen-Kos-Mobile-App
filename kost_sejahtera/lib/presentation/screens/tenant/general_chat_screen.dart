@@ -98,8 +98,6 @@ class _GeneralChatScreenState extends State<GeneralChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat dengan Admin'),
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
