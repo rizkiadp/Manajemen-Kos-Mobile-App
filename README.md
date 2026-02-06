@@ -10,7 +10,7 @@ Aplikasi manajemen kos modern dan terpercaya yang memudahkan pemilik kos dalam m
 
 ## Deploy Online (100% GRATIS & TANPA KARTU KREDIT)
 
-Karena Render meminta kartu kredit, solusi terbaik saat ini adalah menggunakan **Vercel** (Backend) dan **Neon** (Database).
+
 
 ### 1. Database: Neon.tech
 1.  Buka [neon.tech](https://neon.tech/) dan daftar pakai Google.
@@ -18,7 +18,7 @@ Karena Render meminta kartu kredit, solusi terbaik saat ini adalah menggunakan *
 3.  Copy **Connection String** yang muncul (format: `postgres://...`).
 
 ### 2. Backend: Vercel
-Vercel sangat ramah untuk akun hobi dan jarang meminta kartu kredit untuk fitur dasar.
+
 
 **Persiapan:**
 Saya sudah menambahkan file `vercel.json` di dalam folder backend agar support Vercel.
